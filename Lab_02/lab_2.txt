@@ -1,0 +1,46 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE Courses (
+	course_id INTEGER PRIMARY KEY,
+	course_name TEXT NOT NULL,
+	credits INTEGER
+);
+
+CREATE TABLE Student ( 
+student_id INTEGER PRIMARY KEY, 
+name TEXT NOT NULL, 
+age INTEGER, 
+department TEXT, 
+course_id INTEGER, 
+FOREIGN KEY (course_id) REFERENCES Courses(course_id) 
+ON DELETE CASCADE 
+ON UPDATE CASCADE );
+
+INSERT INTO Courses (course_id,course_name,credits)
+VALUES (101,'DATABASE Systems',3),(102,'Data Visualzation',4),(103,'AI',3),(104,'IDS',3)
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (1,'Ali',20,'Data Science',101),(2,'Hassan',22,'Computer Science',101),(3,'Ayesha',21,'Software engineer',102),(4,'Arfa',23,'Software Technology',103),(5,'Sara',18,'AI',NULL)
+
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (1,'Ali',20,'Data Science',101) --UNIQUE CONSTRAINT FAIL
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (NULL,'Ali',20,'Data Science',101) --sucessfull but uniquely made by it 
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (7,'Ahsan',26,'Data Science',108) --FOREIGN KEY CONSTRAINT
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (7,'Hala',20,'Data Science',101),(8,'Thor',22,'Computer Science',101),(9,'ragnork',21,'Software engineer',102),(10,'Ratatoli',23,'Software Technology',103),(11,'Saphora',18,'AI',104)
+
+INSERT INTO Student (student_id,name,age,department,course_id)
+VALUES (12,'alpha',20,'Data Science',NUll),(13,'Gamma',22,'Computer Science',NUll),(14,'BETA',21,'Software engineer',NUll)
+
+DELETE FROM Courses WHERE course_id = 102; --Sucessfull
+
+UPDATE Courses SET course_id = 108 where course_id = 104; --Sucessfull
+
+
+
