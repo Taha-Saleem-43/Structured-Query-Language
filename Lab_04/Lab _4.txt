@@ -1,0 +1,19 @@
+SELECT lower(ename) as Names,job,dname from  emp INNER JOIN dept on emp.deptno==dept.deptno;
+
+SELECT ename,dname,location from  emp INNER JOIN dept on emp.deptno==dept.deptno WHERE emp.ename like '%AH%' AND emp.sal BETWEEN 10000 AND 20000 order by emp.sal;
+
+SELECT ename,round(sal,-3) as sal,mgr,grade from emp INNER JOIN salgrade on emp.sal BETWEEN salgrade.losal AND salgrade.hisal WHERE emp.mgr=7698;
+
+Select ename,job,dname,mgr from emp INNER JOIN dept on emp.deptno=dept.deptno order by emp.mgr;
+
+Select ename,job,location from emp INNER JOIN dept on emp.deptno=dept.deptno where emp.job='CLERK' AND dept.location='Multan';
+
+Select ename,job,sal,grade from emp INNER JOIN salgrade INNER JOIN dept on emp.sal between salgrade.losal And salgrade.hisal AND emp.deptno=dept.deptno where dept.dname='Sales';
+
+SELECT ename,sal+(sal*0.2) as New_salary,grade from emp INNER JOIN salgrade on New_salary between salgrade.losal AND salgrade.hisal where emp.hiredate<'5-03-1996';
+
+SELECT substr(ename,1,1)||upper(substr(dname,1,3))||upper(substr(location,length(location)-2,length(location)))||grade||'@gmail.com' as email from emp INNER join dept INNER join salgrade on emp.deptno=dept.deptno AND emp.sal between salgrade.losal AND salgrade.hisal;
+
+SELECT ename,job,dname,grade from emp INNER JOIN dept INNER JOIN salgrade on emp.deptno=dept.deptno AND emp.sal BETWEEN salgrade.losal AND salgrade.hisal where emp.job like '%MAN%' AND NOT dept.dname='Operations' order by grade DESC;
+
+SELECT ename||' '||'is a grade'||' '||grade||' '||'employee who have been working in'||' '||dname||' '||'since'||' '||hiredate as Employees from emp INNER join dept INNER join salgrade on emp.deptno=dept.deptno AND emp.sal between salgrade.losal AND salgrade.hisal where ename like '%EE%';
