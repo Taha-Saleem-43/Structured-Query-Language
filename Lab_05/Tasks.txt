@@ -1,0 +1,34 @@
+---------------------------------------------------------TASK NO 1------------------------------------------------------------------------------------------------------------
+
+SELECT Ename,EMP.Title,PNAME,SAL from EMP INNER JOIN ASG INNER join PROJECT INNER join PAY on EMP.ENO=ASG.ENO AND EMP.Title=PAY.TITLE AND ASG.PNO=PROJECT.PNO WHERE PROJECT.BUDGET>50000;
+
+---------------------------------------------------------TASK NO 2------------------------------------------------------------------------------------------------------------
+
+SELECT Ename,PNAME,max(SAL) as s,min(DUR) as d from EMP INNER JOIN ASG INNER join PROJECT INNER join PAY on EMP.ENO=ASG.ENO AND EMP.Title=PAY.TITLE AND ASG.PNO=PROJECT.PNO GROUP by Ename,PNAME HAVING (s=PAY.SAL or d=ASG.DUR) AND PROJECT.PNAME in ('Web Development','Finance App');
+
+---------------------------------------------------------TASK NO 3------------------------------------------------------------------------------------------------------------
+
+SELECT count(Ename) as NO_OF_EMP,avg(SAL) as AVG_SAL,avg(DUR) as AVG_DUR from EMP INNER JOIN ASG INNER join PROJECT INNER join PAY on EMP.ENO=ASG.ENO AND EMP.Title=PAY.TITLE AND ASG.PNO=PROJECT.PNO where EMP.Ename like '%li%' ORDER by Ename;
+
+---------------------------------------------------------TASK NO 4------------------------------------------------------------------------------------------------------------
+
+SELECT Ename,emp.Title,RESP,BUDGET,round(PAY.SAL*1.0/PROJECT.BUDGET*1.0,2) as Ratio from EMP INNER JOIN ASG on EMP.ENO=ASG.ENO INNER join PROJECT on ASG.PNO=PROJECT.PNO INNER join PAY on EMP.Title=PAY.TITLE where EMP.Title!='Analyst' AND (PROJECT.BUDGET BETWEEN 30000 AND 60000) ORDER by Ratio DESC;
+
+---------------------------------------------------------TASK NO 5------------------------------------------------------------------------------------------------------------
+
+SELECT avg(DUR) as AVG_DUR from EMP INNER JOIN ASG on EMP.ENO=ASG.ENO INNER join PROJECT on ASG.PNO=PROJECT.PNO INNER join PAY on EMP.Title=PAY.TITLE where PROJECT.PNAME='Web Development' or PROJECT.PNAME like '%system%'
+
+---------------------------------------------------------TASK NO 6------------------------------------------------------------------------------------------------------------
+
+SELECT EMP.Title as JOB_Title, round(PAY.SAL*1.0/160*1.0,2) as Hourly_Labour_cost,sum(DUR)*160 as total_hours
+from EMP INNER JOIN ASG on EMP.ENO=ASG.ENO 
+INNER join PROJECT on ASG.PNO=PROJECT.PNO 
+INNER join PAY on EMP.Title=PAY.TITLE 
+GROUP by JOB_Title having EMP.Title in ('Manager','Developer','Data Scientist') AND PROJECT.BUDGET>40000 AND DUR>6 order by total_hours
+
+
+
+
+
+
+
