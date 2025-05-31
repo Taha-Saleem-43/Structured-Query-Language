@@ -1,0 +1,160 @@
+--TASK1
+select p.PNO, count(eno) 'TOTAL EMP', avg(dur) 'Average Duration'
+from PROJECT p
+join ASG on ASG.PNO = P.PNO
+group by p.pno
+having count(eno) > 1 and avg(dur) > 7
+
+--TASK2
+SELECT pay.Title, count(eno) 'TOTAL EMPLOYEE' , max(sal) 'MAX SALARY'
+from PAY
+join emp on emp.Title = PAY.TITLE
+group by pay.Title
+HAVING count(eno) >=2 and max(sal)>6000
+
+--TASK3
+select ename,  TITle, PNAME
+from EMP
+join ASG on emp.ENO = ASG.ENO
+join PROJECT p on ASG.PNO = p.PNO
+where p.pno in (select p.PNO
+		from PROJECT p
+		join ASG on ASG.PNO = P.PNO
+		group by p.pno
+		having count(eno) > 1
+		);
+--TASK4
+
+select pay.Title , count(emp.eno) 'TOTAL EMPLOYEE'--, avg(sal) 'AVERAGE SAL'
+from PAY
+join emp on pay.TITLE = emp.Title
+group by pay.TITLE
+having avg(sal) > (select avg(sal)
+					from emp
+					join ASG on emp.ENO = ASG.ENO
+					join PROJECT p on p.pno = ASG.PNO
+					join pay on pay.title = emp.Title
+					where BUDGET < 60000
+				)
+
+--TASK5
+
+select pay.Title , count(emp.eno) 'TOTAL EMPLOYEE'--, sum(sal)
+from PAY
+join emp on pay.TITLE = emp.Title
+group by pay.TITLE
+having sum(sal) > (select avg(sal)
+				FROM EMP
+				join PAY on emp.Title = pay.TITLE
+				where not emp.title like "%Engineer%"
+			)
+
+
+--TASK6
+
+select p.PNAME, count(*) 'Total_Employees'--, sum(dur) 'TOTAL DURATION'
+from PROJECT p
+join asg on p.pno = asg.PNO
+join emp on emp.ENO = asg.ENO
+GROUP by p.PNAME
+having sum(dur) > (
+			select  avg(dur)
+			from PROJECT p
+			join ASG on ASG.PNO = P.PNO
+			where BUDGET >= 40000 
+				and not p.pname like "C%"
+			)
+
+--TASK7
+
+/*
+create view Project_Employee_Stats
+as 
+	select p.PNAME Project_Name, 
+		count(emp.eno) Total_Employees , 
+		avg(dur) Average_Duration
+	from PROJECT p
+	join asg on p.pno = asg.PNO
+	join emp on emp.ENO = asg.ENO
+	GROUP by p.PNAME
+	having count(emp.eno) > 1 and avg(dur) > 6
+;
+*/
+select * 
+from Project_Employee_Stats
+order by Total_Employees DESC, Average_Duration ASC
+
+--TASK8
+/*
+create view High_Value_Assignments
+as	select e.eno, e.ename, e.Title,
+			p.pname, p.BUDGET,
+			A.resp, A.DUR
+	from emp e
+	join ASG a on e.eno = a.ENO
+	join PROJECT p on p.pno = a.PNO
+	where p.budget > (SELECT avg(budget)
+					FROM PROJECT p)
+*/
+select * from High_Value_Assignments
+
+
+--TASK9
+-- Create the Students table 
+CREATE TABLE Students ( 
+StudentID INTEGER PRIMARY KEY, 
+FirstName TEXT, 
+LastName TEXT, 
+Age INTEGER, 
+Grade TEXT 
+); 
+
+INSERT INTO Students (StudentID, 
+FirstName, LastName, Age, Grade) 
+VALUES 
+(1, 'Ali', 'Hasan', 20, 'A'), 
+(2, 'Sara', 'Khan', 21, 'B'), 
+(3, 'Ahmed', 'Raza', 19, 'C'), 
+(4, 'Fatima', 'Noor', 22, 'A'), 
+(5, 'Usman', 'Malik', 20, 'B');
+
+--TASK 10
+--1:  Add a column Email of type TEXT 
+select * from EnrolledStudents;
+ALTER table Students
+ADD column Email TEXT
+
+Alter table Students
+RENAME  column AGE to StudentAge;
+
+Alter Table Students
+RENAME to EnrolledStudents;
+
+delete from EnrolledStudents;
+
+drop TABLE EnrolledStudents;
+
+--TASK11
+CREATE TABLE Employees ( 
+EmpID INTEGER PRIMARY KEY, 
+Name TEXT NOT NULL, 
+Position TEXT, 
+ManagerID INTEGER, 
+FOREIGN KEY (ManagerID) 
+REFERENCES Employees(EmpID) 
+);
+
+INSERT INTO Employees (EmpID, Name, 
+Position, ManagerID) VALUES 
+(1, 'Sara Khan', 'CTO', NULL), -- Top-level manager 
+(2, 'Ahmed Raza', 'CFO', NULL), -- Top-level manager 
+(3, 'Fatima Noor', 'Dev Manager', 1), -- Reports to CTO 
+(4, 'Usman Malik', 'Developer', 3), -- Reports to Dev Manager 
+(5, 'Hassan Iqbal', 'Accountant', 2); -- Reports to CFO
+
+--TASK12
+select e1.name emp_name, e2.name MANAGER
+from Employees e1
+join Employees e2 on e2.EmpID = e1.ManagerID
+ 
+
