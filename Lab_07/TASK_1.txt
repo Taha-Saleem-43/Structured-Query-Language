@@ -1,0 +1,58 @@
+1.Select emp.Ename,count(ASG.PNO) as Count_of_emp
+from EMP join ASG on emp.ENO=ASG.ENO 
+join PROJECT on PROJECT.PNO=ASG.PNO
+GROUP by emp.Ename 
+having count(asg.PNO)>1;
+
+2.Select  PROJECT.PNAME,count(ASG.ENO) as Total_employees,sum(pay.SAL) as SAL
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where PROJECT.PNAME in ('Cybersecurity','Finance App')
+group by PROJECT.PNAME;
+
+3.Select emp.Ename,pay.SAL*1.0/PROJECT.BUDGET*1.0 as Ratio
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where emp.Ename like '%e'
+group by emp.Ename
+order by Ratio DESC;
+
+4.Select emp.ename,pay.SAL,asg.DUR
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where pay.SAL>(Select avg(sal) from pay)
+group by emp.Ename
+having sum(asg.DUR)>(Select Avg(Dur) from ASG)
+
+
+5.Select emp.Ename,emp.Title,pay.SAL
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where PROJECT.BUDGET>(SELECT avg(PROJECT.BUDGET) from PROJECT)
+AND ASG.PNO in (Select asg.pno from ASG group by asg.PNO having count(asg.PNO)>1)
+AND pay.SAL>(Select avg(pay.SAL) from PAY where PAY.Title='Engineer')
+OR  ASG.DUR >(Select avg(ASG.DUR) from ASG)
+
+6.Select emp.Ename,emp.Title,asg.DUR,PROJECT.BUDGET
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+where asg.PNO in (
+	Select asg.PNO 
+	from ASG 
+	group by asg.PNO 
+	having sum(asg.DUR) = (Select sum(asg.DUR) as Total_DUR 
+							from ASG 
+							group by asg.pno
+							order by Total_DUR DESC
+							LIMIT 1)
+										)
+AND asg.DUR>6;
+
+
+
+
+

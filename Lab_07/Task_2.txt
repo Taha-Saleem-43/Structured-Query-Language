@@ -1,0 +1,41 @@
+1.Select e1.ename,e1.sal,salgrade.grade
+from emp e1 join emp e2 on e1.sal = e2.sal*2
+join salgrade on e1.sal BETWEEN salgrade.losal AND salgrade.hisal
+
+2.SELECT dept.dname,count(emp.deptno) as COUNT_OF_EMP
+from emp join dept on emp.deptno=dept.deptno
+where (emp.ename like 'A%' or emp.ename like 'M%')
+group by emp.deptno,dept.dname
+having avg(emp.sal)> (Select avg(emp.sal) from emp);
+
+3.SELECT emp.ename,dept.dname,emp.sal
+from emp join dept
+on emp.deptno=dept.deptno
+where emp.sal>(Select avg(emp.sal) from emp join dept on emp.deptno=dept.deptno where dept.dname like '%a%')
+
+4.SELECT emp.ename,emp.job,emp.sal,dept.dname
+from emp join dept 
+on emp.deptno=dept.deptno
+where emp.sal>(SELECT avg(Sal) from emp where emp.job='MANAGER')
+AND emp.deptno IN (Select emp.deptno from emp group by emp.deptno having count(emp.deptno)>3);
+
+5.Select salgrade.grade as GRADES,count(salgrade.grade) as Count_of_EMP
+from emp join salgrade on emp.sal BETWEEN salgrade.losal AND salgrade.hisal
+join dept on emp.deptno=dept.deptno
+where dept.location='Multan'
+group by salgrade.grade
+order by GRADES;
+
+6.Select e1.ename as Manager_name,e1.sal as Manager_salary,round(avg(e2.sal),2) as Average_report_Salary
+from emp e1 join emp e2 on e1.empno=e2.mgr
+group by e1.ename,e1.sal
+order by Average_report_Salary DESC;
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Taha/Desktop/DATABASE FOR LAB 5..db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1347"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,7:mainPROJECT"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="ASG" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="40"/><column index="2" value="40"/><column index="3" value="124"/><column index="4" value="40"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="EMP" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="40"/><column index="2" value="50"/><column index="3" value="85"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="PROJECT" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="40"/><column index="2" value="111"/><column index="3" value="55"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">Select emp.Ename,count(ASG.PNO) as Count_of_emp
+from EMP join ASG on emp.ENO=ASG.ENO 
+join PROJECT on PROJECT.PNO=ASG.PNO
+GROUP by emp.Ename 
+having count(asg.PNO)&gt;1;
+
+Select  PROJECT.PNAME,count(ASG.ENO) as Total_employees,sum(pay.SAL) as SAL
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where PROJECT.PNAME in ('Cybersecurity','Finance App')
+group by PROJECT.PNAME;
+
+Select emp.Ename,pay.SAL*1.0/PROJECT.BUDGET*1.0 as Ratio
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where emp.Ename like '%e'
+group by emp.Ename
+order by Ratio DESC;
+
+Select emp.ename,pay.SAL,asg.DUR
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where pay.SAL&gt;(Select avg(sal) from pay)
+group by emp.Ename
+having sum(asg.DUR)&gt;(Select Avg(Dur) from ASG)
+
+
+Select emp.Ename,emp.Title,pay.SAL
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+join PAY on pay.TITLE=emp.Title
+where PROJECT.BUDGET&gt;(SELECT avg(PROJECT.BUDGET) from PROJECT)
+AND ASG.PNO in (Select asg.pno from ASG group by asg.PNO having count(asg.PNO)&gt;1)
+AND pay.SAL&gt;(Select avg(pay.SAL) from PAY where PAY.Title='Engineer')
+OR  ASG.DUR &gt;(Select avg(ASG.DUR) from ASG)
+
+
+Select emp.Ename,emp.Title,asg.DUR,PROJECT.BUDGET
+from emp join ASG on emp.ENO=asg.ENO
+join PROJECT on PROJECT.PNO=asg.PNO
+where asg.PNO in (
+	Select asg.PNO 
+	from ASG 
+	group by asg.PNO 
+	having sum(asg.DUR) = (Select sum(asg.DUR) as Total_DUR 
+							from ASG 
+							group by asg.pno
+							order by Total_DUR DESC
+							LIMIT 1)
+										)
+AND asg.DUR&gt;6;
+
+
+
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
