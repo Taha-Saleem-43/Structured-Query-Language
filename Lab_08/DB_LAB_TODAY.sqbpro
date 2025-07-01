@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:\Users\Taha\Desktop\DB LAB 8.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1919"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,11:mainOrder_Items"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Customers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="88"/><column index="2" value="84"/><column index="3" value="170"/><column index="4" value="68"/><column index="5" value="88"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Order_Items" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="99"/><column index="2" value="63"/><column index="3" value="78"/><column index="4" value="63"/><column index="5" value="73"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Orders" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="63"/><column index="2" value="88"/><column index="3" value="82"/><column index="4" value="96"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Products" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="78"/><column index="2" value="111"/><column index="3" value="74"/><column index="4" value="53"/><column index="5" value="73"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">Select name,price,
+	CASE
+		when price&lt;=1000 THEN 'Cheap'
+		when price BETWEEN 1001 AND 3000 THEN 'Moderate'
+		when price&gt;3000 THEN 'Expensive'
+		END AS 'Category'
+ from Products
+ 
+SELECT name,order_id,total_amount,
+		Case
+			when city='Lahore' AND total_amount&gt;5000 THEN '10%'
+			when city='Karachi' AND total_amount&gt;3000 THEN '5%'
+			Else 'No Discount'
+		END AS 'Discount_Applied',
+		Case
+			when city='Lahore' AND total_amount&gt;5000 THEN total_amount-(total_amount*(0.1))
+			when city='Karachi' AND total_amount BETWEEN 3000 AND 4999 THEN total_amount-(total_amount*(0.05))
+			Else total_amount
+		END AS 'Discount_Total'
+ from Customers  join Orders on Customers.customer_id=Orders.customer_id;
+ 
+SELECT 
+	CASE	
+		when total_amount&lt;=1000 THEN 'Low'
+		when total_amount BETWEEN 1001 AND 5000 THEN 'Medium'
+		when total_amount&gt;5000 THEN 'High'
+		End As 'Category_Name',
+		count(order_id) as Total_orders,
+		Sum(total_amount) as Total_ALL_orders
+from Orders
+group by Category_Name;
+
+
+SELECT Products.name,(quantity*unit_price) as Total_Sales,
+	CASE
+		when (quantity*unit_price)&lt;=5000 THEN 'Low Seller'
+		when (quantity*unit_price) BETWEEN 5001 AND 20000 THEN 'Medium Seller'
+		when (quantity*unit_price)&gt;20000 THEN 'High Seller'
+	End as 'Sales Category'
+from Order_Items join Products on Order_Items.product_id=Products.product_id
+group by Products.name;
+
+SELECT name,city,order_id,total_amount
+from Customers join Orders
+on Customers.customer_id=Orders.customer_id
+order by 
+		case 
+			when city='Lahore' THEN total_amount 
+		END desc,
+		Case
+			when city='Karachi' THEN order_id END ASC
+			
+SELECT Customers.name,count(Order_Items.order_id) as Total_num_of_orders,sum(Orders.total_amount) as Total_order_amount
+from Customers join Orders on Customers.customer_id=Orders.customer_id join Order_Items on Order_Items.order_id=Orders.order_id
+group by Customers.name
+order by Total_order_amount DESC
+limit 3;
+
+SELECT Products.category,count(Order_Items.product_id) as Total_orders,avg(Products.stock_qty) as Average_Stock
+from Products JOIN Order_Items on Products.product_id=Order_Items.product_id
+group by Products.category
+having count(Order_Items.product_id)&gt;10 or avg(Products.stock_qty)&lt;50;
+
+
+SELECT Customers.name,Customers.city,count(Orders.order_id) as Total_orders 
+from Orders join Order_Items 
+on Orders.order_id=Order_Items.order_id
+join Customers on Customers.customer_id=Orders.customer_id 
+group by Orders.order_id
+having count(Orders.order_id)&gt;(SELECT avg((SELECT count(Order_Items.order_id) from Order_Items GROUP by Order_Items.order_id)))
+
+
+SELECT 
+    p.name AS product_name,
+    COUNT(DISTINCT o.customer_id) AS unique_customers,
+    SUM(oi.quantity * oi.unit_price) AS total_revenue,
+    CASE 
+        WHEN SUM(oi.quantity * oi.unit_price) &gt; 5000 THEN 'High Revenue'
+        ELSE 'Low Revenue'
+    END AS revenue_category
+FROM Products p
+JOIN Order_Items oi ON p.product_id = oi.product_id
+JOIN Orders o ON oi.order_id = o.order_id
+GROUP BY p.name
+HAVING COUNT(DISTINCT o.customer_id) &gt; 5;
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
